@@ -7,13 +7,13 @@ static const int WIN_HEIGHT = 600;
 /* colors and font can be overwritten via X resource properties.
  * See nsxiv(1), X(7) section Resources and xrdb(1) for more information.
  *                                      X resource            value (NULL == default) */
-static const char *WIN_BG[]   = { "Nsxiv.window.background",   "white" };
-static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "black" };
-static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",      NULL };
+static const char *WIN_BG[]   = { "Nsxiv.window.background",   "#282828" };
+static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "#ebdbb2" };
+static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",     "#cc241d" };
 #if HAVE_LIBFONTS
-static const char *BAR_BG[]   = { "Nsxiv.bar.background",       NULL };
-static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",       NULL };
-static const char *BAR_FONT[] = { "Nsxiv.bar.font",            "monospace-8" };
+static const char *BAR_BG[]   = { "Nsxiv.bar.background",      "#83a598" };
+static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",      "#282828" };
+static const char *BAR_FONT[] = { "Nsxiv.bar.font",            "JetBrainsMono Nerd Font Propo-11" };
 
 /* if true, statusbar appears on top of the window */
 static const bool TOP_STATUSBAR = false;
@@ -26,12 +26,12 @@ static const bool TOP_STATUSBAR = false;
  * (first/last value is used as min/max zoom level)
  */
 static const float zoom_levels[] = {
-	 12.5,  25.0,  50.0,  75.0,
-	100.0, 150.0, 200.0, 400.0, 800.0
+	10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0,
+	110.0, 120.0, 130.0, 140.0, 150.0, 200.0, 300.0, 400.0, 500.0
 };
 
 /* default slideshow delay (in sec, overwritten via -S option): */
-static const int SLIDESHOW_DELAY = 5;
+static const int SLIDESHOW_DELAY = 3;
 
 /* color correction: the user-visible ranges [-CC_STEPS, 0] and
  * (0, CC_STEPS] are mapped to the ranges [0, 1], and (1, *_MAX].
@@ -70,14 +70,22 @@ static const bool ANTI_ALIAS = true;
  */
 static const bool ALPHA_LAYER = false;
 
+/* list of whitelisted/blacklisted directory for thumbnail cache
+ * (overwritten via --cache-{allow,deny} option).
+ * see THUMBNAIL CACHING section in nsxiv(1) manpage for more details.
+ */
+static const char TNS_FILTERS[] = "";
+/* set to true to treat `TNS_FILTERS` as a blacklist instead */
+static const bool TNS_FILTERS_IS_BLACKLIST = false;
+
 #endif
 #ifdef INCLUDE_THUMBS_CONFIG
 
 /* thumbnail sizes in pixels (width == height): */
-static const int thumb_sizes[] = { 32, 64, 96, 128, 160 };
+static const int thumb_sizes[] = { 120, 160, 200, 240, 280 };
 
 /* thumbnail size at startup, index into thumb_sizes[]: */
-static const int THUMB_SIZE = 3;
+static const int THUMB_SIZE = 2;
 
 #endif
 #ifdef INCLUDE_MAPPINGS_CONFIG
@@ -91,15 +99,15 @@ static const KeySym KEYHANDLER_ABORT = XK_Escape;
 /* keyboard mappings for image and thumbnail mode: */
 static const keymap_t keys[] = {
 	/* modifiers    key               function              argument */
-	{ 0,            XK_q,             g_quit,               0 },
+	// { 0,            XK_q,             g_quit,               0 },
 	{ 0,            XK_Q,             g_pick_quit,          0 },
 	{ 0,            XK_Return,        g_switch_mode,        None },
-	{ 0,            XK_f,             g_toggle_fullscreen,  None },
-	{ 0,            XK_b,             g_toggle_bar,         None },
-	{ ControlMask,  XK_x,             g_prefix_external,    None },
+	// { 0,            XK_f,             g_toggle_fullscreen,  None },
+	{ ControlMask,  XK_n,             g_toggle_bar,         None },
+	{ 0,		XK_c,             g_prefix_external,    None },
 	{ 0,            XK_g,             g_first,              None },
 	{ 0,            XK_G,             g_n_or_last,          None },
-	{ 0,            XK_r,             g_reload_image,       None },
+	{ ControlMask,  XK_r,             g_reload_image,       None },
 	{ 0,            XK_D,             g_remove_image,       None },
 	{ ControlMask,  XK_h,             g_scroll_screen,      DIR_LEFT },
 	{ ControlMask,  XK_Left,          g_scroll_screen,      DIR_LEFT },
@@ -109,8 +117,8 @@ static const keymap_t keys[] = {
 	{ ControlMask,  XK_Up,            g_scroll_screen,      DIR_UP },
 	{ ControlMask,  XK_l,             g_scroll_screen,      DIR_RIGHT },
 	{ ControlMask,  XK_Right,         g_scroll_screen,      DIR_RIGHT },
-	{ 0,            XK_plus,          g_zoom,               +1 },
-	{ 0,            XK_KP_Add,        g_zoom,               +1 },
+	{ 0,            XK_equal,         g_zoom,               +1 },
+	{ 0,            XK_KP_Equal,      g_zoom,               +1 },
 	{ 0,            XK_minus,         g_zoom,               -1 },
 	{ 0,            XK_KP_Subtract,   g_zoom,               -1 },
 	{ 0,            XK_m,             g_toggle_image_mark,  None },
@@ -146,7 +154,7 @@ static const keymap_t keys[] = {
 	{ 0,            XK_bracketright,  i_navigate,           +10 },
 	{ 0,            XK_bracketleft,   i_navigate,           -10 },
 	{ ControlMask,  XK_6,             i_alternate,          None },
-	{ ControlMask,  XK_n,             i_navigate_frame,     +1 },
+	// { ControlMask,  XK_n,             i_navigate_frame,     +1 },
 	{ ControlMask,  XK_p,             i_navigate_frame,     -1 },
 	{ ControlMask,  XK_space,         i_toggle_animation,   None },
 	{ ControlMask,  XK_a,             i_toggle_animation,   None },
@@ -163,14 +171,17 @@ static const keymap_t keys[] = {
 	{ 0,            XK_K,             i_scroll_to_edge,     DIR_UP },
 	{ 0,            XK_L,             i_scroll_to_edge,     DIR_RIGHT },
 	{ 0,            XK_z,             i_scroll_to_center,   None },
-	{ 0,            XK_equal,         i_set_zoom,           100 },
+	{ ControlMask,  XK_equal,         i_set_zoom,           100 },
+	{ ControlMask,  XK_0,             i_set_zoom,           100 },
 	{ 0,            XK_w,             i_fit_to_win,         SCALE_DOWN },
-	{ 0,            XK_W,             i_fit_to_win,         SCALE_FIT },
+	{ 0,            XK_f,             i_fit_to_win,         SCALE_FIT },
 	{ 0,            XK_F,             i_fit_to_win,         SCALE_FILL },
 	{ 0,            XK_e,             i_fit_to_win,         SCALE_WIDTH },
 	{ 0,            XK_E,             i_fit_to_win,         SCALE_HEIGHT },
-	{ 0,            XK_less,          i_rotate,             DEGREE_270 },
-	{ 0,            XK_greater,       i_rotate,             DEGREE_90 },
+	{ ShiftMask,    XK_r,             i_rotate,             DEGREE_270 },
+	{ ControlMask,  XK_Left,          i_rotate,             DEGREE_270 },
+	{ 0,            XK_r,             i_rotate,             DEGREE_90 },
+	{ ControlMask,  XK_Right  ,       i_rotate,             DEGREE_90 },
 	{ 0,            XK_question,      i_rotate,             DEGREE_180 },
 	{ 0,            XK_bar,           i_flip,               FLIP_HORIZONTAL },
 	{ 0,            XK_underscore,    i_flip,               FLIP_VERTICAL },
@@ -208,7 +219,7 @@ static const unsigned int NAV_WIDTH = 33;
 
 /* mouse cursor on left, middle and right part of the window */
 static const cursor_t imgcursor[3] = {
-	CURSOR_LEFT, CURSOR_ARROW, CURSOR_RIGHT
+	CURSOR_ARROW, CURSOR_ARROW, CURSOR_ARROW
 };
 
 #endif
