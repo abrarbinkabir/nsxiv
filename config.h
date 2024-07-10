@@ -7,12 +7,12 @@ static const int WIN_HEIGHT = 600;
 /* colors and font can be overwritten via X resource properties.
  * See nsxiv(1), X(7) section Resources and xrdb(1) for more information.
  *                                      X resource            value (NULL == default) */
-static const char *WIN_BG[]   = { "Nsxiv.window.background",   "#282828" };
-static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "#ebdbb2" };
-static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",     "#cc241d" };
+static const char *WIN_BG[]   = { "Nsxiv.window.background",   "#434c5e" };
+static const char *WIN_FG[]   = { "Nsxiv.window.foreground",   "#eceff4" };
+static const char *MARK_FG[]  = { "Nsxiv.mark.foreground",     "#bf616a" };
 #if HAVE_LIBFONTS
-static const char *BAR_BG[]   = { "Nsxiv.bar.background",      "#83a598" };
-static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",      "#282828" };
+static const char *BAR_BG[]   = { "Nsxiv.bar.background",      "#81a1c1" };
+static const char *BAR_FG[]   = { "Nsxiv.bar.foreground",      "#2e3440" };
 static const char *BAR_FONT[] = { "Nsxiv.bar.font",            "JetBrainsMono Nerd Font Propo-11" };
 
 /* if true, statusbar appears on top of the window */
@@ -31,7 +31,7 @@ static const float zoom_levels[] = {
 };
 
 /* default slideshow delay (in sec, overwritten via -S option): */
-static const int SLIDESHOW_DELAY = 3;
+static const int SLIDESHOW_DELAY = 5;
 
 /* color correction: the user-visible ranges [-CC_STEPS, 0] and
  * (0, CC_STEPS] are mapped to the ranges [0, 1], and (1, *_MAX].
